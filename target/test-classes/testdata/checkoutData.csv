@@ -1,0 +1,6 @@
+firstName,lastName,postalCode
+John,Doe,12345
+Jane,Smith,90210
+,Doe,12345
+John,,12345
+John,Doe,

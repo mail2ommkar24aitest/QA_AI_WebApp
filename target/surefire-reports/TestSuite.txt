@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: TestSuite
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 98.18 s <<< FAILURE! -- in TestSuite
+com.saucedemo.runners.TestRunner.runScenario["Logout After Purchase Flow", "SauceDemo Complete End to End Flow"](2) -- Time elapsed: 49.12 s <<< FAILURE!
+java.lang.AssertionError: FAILED: Expected to land on home.html after logout, but current URL is: https://www.saucedemo.com/ expected [true] but found [false]
+	at org.testng.Assert.fail(Assert.java:111)
+	at org.testng.Assert.failNotEquals(Assert.java:1578)
+	at org.testng.Assert.assertTrue(Assert.java:57)
+	at com.saucedemo.stepdefinitions.LoginSteps.theLogoutShouldNavigateToTheHomePage(LoginSteps.java:138)
+	at ✽.the logout should navigate to the home page(file:///C:/Users/omkar.qualitrix/Saucedemo_SeleniumAutomation_AI/src/test/resources/features/EndToEnd.feature:30)
+

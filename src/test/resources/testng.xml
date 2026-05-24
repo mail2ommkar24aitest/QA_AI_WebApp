@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="SauceDemo Web Automation Suite" parallel="none" verbose="1">
+    
+    <!-- Register our custom TestListener for Extent Reports -->
+    <listeners>
+        <listener class-name="com.saucedemo.base.TestListener" />
+    </listeners>
+    
+    <!-- Test execution group definitions -->
+    <test name="SauceDemo Web Functional Tests">
+        <classes>
+            <class name="com.saucedemo.runners.TestRunner" />
+        </classes>
+    </test>
+</suite>

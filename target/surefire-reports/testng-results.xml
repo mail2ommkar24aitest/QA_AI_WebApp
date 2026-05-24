@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="2" passed="1" failed="1" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2026-05-24T21:10:40 IST" name="SauceDemo Web Automation Suite" finished-at="2026-05-24T21:12:16 IST" duration-ms="96071">
+    <groups>
+      <group name="cucumber">
+        <method signature="AbstractTestNGCucumberTests.runScenario(io.cucumber.testng.PickleWrapper,io.cucumber.testng.FeatureWrapper)[pri:0, instance:com.saucedemo.runners.TestRunner@7c7b252e]" name="runScenario" class="io.cucumber.testng.AbstractTestNGCucumberTests"/>
+      </group> <!-- cucumber -->
+    </groups>
+    <test started-at="2026-05-24T21:10:40 IST" name="SauceDemo Web Functional Tests" finished-at="2026-05-24T21:12:16 IST" duration-ms="96071">
+      <class name="com.saucedemo.runners.TestRunner">
+        <test-method is-config="true" signature="setUpClass(org.testng.ITestContext)[pri:0, instance:com.saucedemo.runners.TestRunner@7c7b252e]" started-at="2026-05-24T21:10:40 IST" name="setUpClass" finished-at="2026-05-24T21:10:42 IST" duration-ms="1226" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.testng.TestRunner@647b9364]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUpClass -->
+        <test-method signature="runScenario(io.cucumber.testng.PickleWrapper,io.cucumber.testng.FeatureWrapper)[pri:0, instance:com.saucedemo.runners.TestRunner@7c7b252e]" started-at="2026-05-24T21:10:42 IST" name="runScenario" description="Runs Cucumber Scenarios" data-provider="scenarios" finished-at="2026-05-24T21:11:27 IST" duration-ms="45008" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA["Complete End to End Purchase Flow"]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA["SauceDemo Complete End to End Flow"]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- runScenario -->
+        <test-method signature="runScenario(io.cucumber.testng.PickleWrapper,io.cucumber.testng.FeatureWrapper)[pri:0, instance:com.saucedemo.runners.TestRunner@7c7b252e]" started-at="2026-05-24T21:11:27 IST" name="runScenario" description="Runs Cucumber Scenarios" data-provider="scenarios" finished-at="2026-05-24T21:12:16 IST" duration-ms="49120" status="FAIL">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA["Logout After Purchase Flow"]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA["SauceDemo Complete End to End Flow"]]>
+              </value>
+            </param>
+          </params>
+          <exception class="java.lang.AssertionError">
+            <message>
+              <![CDATA[FAILED: Expected to land on home.html after logout, but current URL is: https://www.saucedemo.com/ expected [true] but found [false]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.AssertionError: FAILED: Expected to land on home.html after logout, but current URL is: https://www.saucedemo.com/ expected [true] but found [false]
+at org.testng.Assert.fail(Assert.java:111)
+at org.testng.Assert.failNotEquals(Assert.java:1578)
+at org.testng.Assert.assertTrue(Assert.java:57)
+at com.saucedemo.stepdefinitions.LoginSteps.theLogoutShouldNavigateToTheHomePage(LoginSteps.java:138)
+at ✽.the logout should navigate to the home page(file:///C:/Users/omkar.qualitrix/Saucedemo_SeleniumAutomation_AI/src/test/resources/features/EndToEnd.feature:30)
+]]>
+            </full-stacktrace>
+          </exception> <!-- java.lang.AssertionError -->
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- runScenario -->
+        <test-method is-config="true" signature="tearDownClass()[pri:0, instance:com.saucedemo.runners.TestRunner@7c7b252e]" started-at="2026-05-24T21:12:16 IST" name="tearDownClass" finished-at="2026-05-24T21:12:16 IST" duration-ms="127" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDownClass -->
+      </class> <!-- com.saucedemo.runners.TestRunner -->
+    </test> <!-- SauceDemo Web Functional Tests -->
+  </suite> <!-- SauceDemo Web Automation Suite -->
+</testng-results>

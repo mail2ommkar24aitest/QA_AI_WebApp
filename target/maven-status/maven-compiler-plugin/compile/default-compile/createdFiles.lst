@@ -1,0 +1,10 @@
+com\saucedemo\utils\ExtentManager.class
+com\saucedemo\pages\CheckoutStepOnePage.class
+com\saucedemo\utils\ConfigReader.class
+com\saucedemo\utils\CsvUtils.class
+com\saucedemo\pages\LoginPage.class
+com\saucedemo\pages\InventoryPage.class
+com\saucedemo\pages\CheckoutStepTwoPage.class
+com\saucedemo\pages\CartPage.class
+com\saucedemo\pages\CheckoutCompletePage.class
+com\saucedemo\utils\WaitUtils.class
