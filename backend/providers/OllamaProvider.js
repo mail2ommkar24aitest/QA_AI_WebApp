@@ -6,39 +6,54 @@ class OllamaProvider extends BaseProvider {
     const endpoint = `${ollamaUrl}/api/generate`;
     const model = options.model || 'llama3';
 
-    console.log(`[Backend] Calling Ollama for model: ${model}`);
+    console.log(`[OllamaProvider] Calling Ollama for model: ${model}`);
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        model, 
-        prompt, 
-        stream: true, 
-        options: {
-          temperature: options.temperature || 0.7,
-          ...options.ollamaOptions
-        }
-      }),
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Ollama Error: ${errText}`);
+    let ollamaResponse;
+    try {
+      ollamaResponse = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          model, 
+          prompt, 
+          stream: true, 
+          options: {
+            temperature: options.temperature || 0.7,
+            ...options.ollamaOptions
+          }
+        }),
+      });
+    } catch (fetchErr) {
+      // Ollama not running — give a clear error
+      throw new Error(`Cannot connect to Ollama at ${ollamaUrl}. Is Ollama running?`);
     }
 
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    
-    const reader = response.body.getReader();
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      res.write(value);
+    if (!ollamaResponse.ok) {
+      const errText = await ollamaResponse.text();
+      throw new Error(`Ollama error (${ollamaResponse.status}): ${errText}`);
     }
-    res.end();
+
+    const safeWrite = (chunk) => {
+      if (!res.writableEnded) {
+        res.write(chunk);
+      }
+    };
+
+    const reader = ollamaResponse.body.getReader();
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        safeWrite(value);
+      }
+    } finally {
+      // Always release the reader and close the response
+      reader.releaseLock();
+      if (!res.writableEnded) {
+        res.end();
+      }
+    }
   }
 
   async generateResponse(prompt, options, settings) {
@@ -46,23 +61,28 @@ class OllamaProvider extends BaseProvider {
     const endpoint = `${ollamaUrl}/api/generate`;
     const model = options.model || 'llama3';
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        model, 
-        prompt, 
-        stream: false, 
-        options: {
-          temperature: options.temperature || 0.7,
-          ...options.ollamaOptions
-        }
-      }),
-    });
+    let response;
+    try {
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          model, 
+          prompt, 
+          stream: false, 
+          options: {
+            temperature: options.temperature || 0.7,
+            ...options.ollamaOptions
+          }
+        }),
+      });
+    } catch (fetchErr) {
+      throw new Error(`Cannot connect to Ollama at ${ollamaUrl}. Is Ollama running?`);
+    }
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new Error(`Ollama Error: ${errText}`);
+      throw new Error(`Ollama error (${response.status}): ${errText}`);
     }
 
     const data = await response.json();

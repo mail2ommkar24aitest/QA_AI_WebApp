@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Sparkles, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const MessageBubble = ({ message }) => {
   const isUser = message.role === 'user';
@@ -28,8 +29,8 @@ const MessageBubble = ({ message }) => {
             ? 'bg-white dark:bg-brand-600 border border-slate-200 dark:border-brand-500/50 text-slate-800 dark:text-white rounded-tr-none' 
             : 'bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-100 rounded-tl-none'
         }`}>
-          <div className="prose dark:prose-invert max-w-none prose-sm md:prose-base prose-pre:bg-slate-900 prose-pre:border prose-pre:border-white/10">
-            <ReactMarkdown>{message.content}</ReactMarkdown>
+          <div className="prose dark:prose-invert max-w-none prose-sm md:prose-base prose-pre:bg-slate-900 prose-pre:border prose-pre:border-white/10 prose-table:w-full">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
           </div>
         </div>
         

@@ -13,6 +13,17 @@ import defectRouter from './routes/defect.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// ─── Global crash guards ───────────────────────────────────────────────────
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[Server] Unhandled Rejection at:', promise, 'reason:', reason?.message || reason);
+  // Do NOT exit — keep server alive
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('[Server] Uncaught Exception:', err.message || err);
+  // Do NOT exit — keep server alive
+});
+
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({ origin: '*' }));
 app.use(express.json());
@@ -47,7 +58,9 @@ app.use((_req, res) => {
 // Global error handler
 app.use((err, _req, res, _next) => {
   console.error('[Error]', err.message);
-  res.status(500).json({ error: err.message || 'Internal server error' });
+  if (!res.headersSent) {
+    res.status(500).json({ error: err.message || 'Internal server error' });
+  }
 });
 
 app.listen(PORT, () => {

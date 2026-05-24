@@ -17,14 +17,20 @@ class OpenAIProvider extends BaseProvider {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
+    const safeWrite = (chunk) => {
+      if (!res.writableEnded) {
+        res.write(chunk);
+      }
+    };
+
     for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content || '';
       if (content) {
-        res.write(`data: ${content}\n`);
+        safeWrite(JSON.stringify({ response: content }) + '\n');
       }
     }
-    res.write('data: [DONE]\n');
-    res.end();
+    safeWrite('data: [DONE]\n\n');
+    if (!res.writableEnded) res.end();
   }
 }
 

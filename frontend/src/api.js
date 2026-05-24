@@ -28,12 +28,20 @@ export const chatStream = async (model, prompt, onChunk, onDone, onError, provid
       }),
     });
 
+    // ── Handle non-streaming error responses (400, 500, etc.) ──────────────
     if (!response.ok) {
-      const data = await response.json();
-      const errorMessage = data.error || 'Failed to start chat stream';
-      throw new Error(errorMessage);
+      // Check content type — backend sends JSON for pre-stream errors
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = await response.json();
+        throw new Error(data.error || `Server error (${response.status})`);
+      } else {
+        const text = await response.text();
+        throw new Error(text || `Server error (${response.status})`);
+      }
     }
 
+    // ── Stream is live — read SSE chunks ────────────────────────────────────
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let fullText = '';
@@ -44,18 +52,15 @@ export const chatStream = async (model, prompt, onChunk, onDone, onError, provid
       if (done) break;
 
       const chunk = decoder.decode(value, { stream: true });
-      
-      // Handle both raw text (for Cloud models) and JSON strings (for Ollama)
-      // Actually, let's make the backend return consistent format or handle it here
       buffer += chunk;
       
       const lines = buffer.split('\n');
-      buffer = lines.pop();
+      buffer = lines.pop(); // keep incomplete last line in buffer
 
       for (const line of lines) {
         if (!line.trim()) continue;
         
-        // If it's the cloud response format from our backend
+        // SSE format: "data: <content>"
         if (line.startsWith('data: ')) {
           const dataContent = line.slice(6);
           if (dataContent === '[DONE]') {
@@ -71,7 +76,7 @@ export const chatStream = async (model, prompt, onChunk, onDone, onError, provid
           continue;
         }
 
-        // Try parsing as Ollama JSON
+        // Ollama raw JSON format
         try {
           const json = JSON.parse(line);
           if (json.response) {
@@ -82,18 +87,25 @@ export const chatStream = async (model, prompt, onChunk, onDone, onError, provid
             onDone(fullText);
           }
         } catch (e) {
-          // If it's just raw text, append it (fallback)
+          // Raw text fallback
           fullText += line;
           onChunk(fullText);
         }
       }
     }
-  } catch (error) {
-    console.error('[API] Chat stream caught error:', error);
-    let errorMsg = error.toString();
-    if (error instanceof Error) {
-      errorMsg = error.message;
+
+    // If stream ended without [DONE], still call onDone
+    if (fullText && !fullText.endsWith('[DONE]')) {
+      onDone(fullText);
     }
+
+  } catch (error) {
+    // Ignore intentional aborts
+    if (error?.name === 'AbortError' || error?.message?.includes('signal is aborted')) {
+      return;
+    }
+    console.error('[API] Chat stream caught error:', error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
     onError(errorMsg);
   }
 };

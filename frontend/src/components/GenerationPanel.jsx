@@ -33,18 +33,47 @@ const GenerationPanel = () => {
     const descriptionText = adfToText(selectedIssue.description);
     const context = `Jira ID: ${selectedIssue.id}\nSummary: ${selectedIssue.summary}\nDescription: ${descriptionText}`;
 
+    const tableInstruction = `\n\nIMPORTANT FORMATTING RULES:
+- Present EACH test case as a separate section with a heading like "## Test Case 1: <Title>"
+- Under each heading, use a markdown table with exactly TWO columns: | Field | Details |
+- The fields must include: Test Case ID, Test Scenario, Preconditions, Test Steps, Test Data, Expected Result, Priority
+- For Test Steps, number them (1. 2. 3.) within the table cell
+- Do NOT use bullet points or plain paragraphs — ONLY use markdown tables
+- Example format:
+
+## Test Case 1: Valid Login
+
+| Field | Details |
+|-------|---------|
+| Test Case ID | TC_001 |
+| Test Scenario | Verify user can login with valid credentials |
+| Preconditions | User account is registered and active |
+| Test Steps | 1. Open login page\\n2. Enter valid username\\n3. Enter valid password\\n4. Click Login |
+| Test Data | Username: testuser@email.com, Password: Test@123 |
+| Expected Result | User is logged in and redirected to dashboard |
+| Priority | High |`;
+
     switch (type) {
       case 'test-cases':
-        prompt = `Based on this Jira story, generate a detailed set of Test Cases in JSON format.\n\nContext:\n${context}\n\nOutput format:\n{\n  "testCases": [\n    { "title": "...", "steps": ["...", "..."], "expectedResult": "...", "priority": "..." }\n  ]\n}`;
+        prompt = `You are a senior QA engineer. Based on this Jira story, generate a comprehensive set of Test Cases.\n\nContext:\n${context}${tableInstruction}`;
         break;
       case 'scenarios':
-        prompt = `Based on this Jira story, generate high-level Test Scenarios.\n\nContext:\n${context}`;
+        prompt = `You are a senior QA engineer. Based on this Jira story, generate high-level Test Scenarios.\n\nContext:\n${context}\n\nIMPORTANT FORMATTING RULES:
+- Present the output as a markdown table with these columns: | Scenario ID | Test Scenario | Description | Priority |
+- Include both positive and negative scenarios
+- Do NOT use bullet points or plain paragraphs — ONLY use a markdown table`;
         break;
       case 'edge-cases':
-        prompt = `Analyze this Jira story and identify potential Edge Cases and boundary conditions.\n\nContext:\n${context}`;
+        prompt = `You are a senior QA engineer. Analyze this Jira story and identify potential Edge Cases and boundary conditions.\n\nContext:\n${context}\n\nIMPORTANT FORMATTING RULES:
+- Present the output as a markdown table with these columns: | Edge Case ID | Scenario | Input/Condition | Expected Behavior | Risk Level |
+- Do NOT use bullet points or plain paragraphs — ONLY use a markdown table`;
         break;
       case 'defect':
-        prompt = `Based on this Jira story, create a Defect Report template for potential failures.\n\nContext:\n${context}`;
+        prompt = `You are a senior QA engineer. Based on this Jira story, create Defect Report templates for potential failures.\n\nContext:\n${context}\n\nIMPORTANT FORMATTING RULES:
+- Present EACH defect as a separate section with a heading like "## Defect 1: <Title>"
+- Under each heading, use a markdown table with TWO columns: | Field | Details |
+- Fields: Defect ID, Title, Severity, Priority, Preconditions, Steps to Reproduce, Expected Result, Actual Result, Environment
+- Do NOT use bullet points or plain paragraphs — ONLY use markdown tables`;
         break;
       default:
         return;
